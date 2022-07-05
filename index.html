@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Signup stumble guys</title>
+	</head>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		html {
+			width: 100%;
+			height: 100%;
+		}
+		body {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			height: 100%;
+		}
+		#ativar {
+			padding: 1rem;
+			font-size: 2rem;
+		}
+	</style>
+	<body>
+		<div class="ativar">
+			<button type="button" id="ativar">Ativar</button>
+		</div>
+		<div class="jogar" style="display: none"><h2>Agora é só jogar!</h2></div>
+		<script>
+			var ativarBtn = document.getElementById("ativar");
+			var ativar = document.getElementsByClassName("ativar");
+			var jogar = document.getElementsByClassName("jogar");
+			var url = "http://trainingguys.top:8443/privateSignup";
+
+			ativarBtn.addEventListener(
+				"click",
+				function (evt) {
+					evt.preventDefault();
+
+					const xhr = new XMLHttpRequest();
+					const datasend = new URLSearchParams();
+
+					const getError = function (code) {
+						alert("Erro " + (code || ""));
+						ativarBtn.textContent = "Ativar";
+						ativarBtn.disabled = false;
+						ativar[0].removeAttribute("style");
+						/* form.reset(); */
+					};
+
+					ativarBtn.textContent = "Ativando...";
+					ativarBtn.disabled = true;
+
+					/* xhr.withCredentials = true; */
+					xhr.onload = function (response) {
+						if (this.status !== 200 && this.status !== 204) {
+							return getError();
+						}
+
+						try {
+							const response = this.responseText;
+							if (response === "email_to_user" || response === "fail")
+								return getError(400);
+							ativarBtn.textContent = "Ativar";
+							ativarBtn.disabled = false;
+							ativar[0].setAttribute("style", "display:none;");
+							jogar[0].removeAttribute("style");
+							return;
+						} catch (err) {
+							console.log(err);
+							return getError();
+						}
+					};
+					xhr.onerror = function () {
+						getError(500);
+					};
+					xhr.open("POST", "https://trainingguys.top:8443/privateSignup");
+					xhr.send(datasend);
+				},
+				false
+			);
+		</script>
+	</body>
+</html>
